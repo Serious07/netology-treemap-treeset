@@ -1,5 +1,4 @@
 import Person.Person;
-import Person.PersonsComparator;
 
 import java.util.*;
 
@@ -14,10 +13,40 @@ public class Main {
         persons.add(new Person("Екатерина", "Богатая Смелая", 34));
         persons.add(new Person("Олег", "Умный", 40));
 
-        Collections.sort(persons, new PersonsComparator());
+        Comparator<Person> personsComparator = (o1, o2) -> {
+            int minSurnameLength = -1;
+
+            int o1SurnameWordsAmount = o1.getSurname().split(" ").length;
+            int o2SurnameWordsAmount = o2.getSurname().split(" ").length;
+
+            if(minSurnameLength == -1) {
+                return standardCompare(o1, o2, o1SurnameWordsAmount, o2SurnameWordsAmount);
+            } else {
+                if(o1SurnameWordsAmount >= minSurnameLength &&
+                        o2SurnameWordsAmount >= minSurnameLength){
+                    return Integer.compare(o1.getAge(), o2.getAge());
+                } else {
+                    return standardCompare(o1, o2, o1SurnameWordsAmount, o2SurnameWordsAmount);
+                }
+            }
+        };
+
+        Collections.sort(persons, personsComparator);
 
         for(Person p : persons){
             System.out.println(p);
         }
+    }
+
+    private static int standardCompare(Person o1, Person o2, int o1SurnameWordsAmount, int o2SurnameWordsAmount){
+        if (o1SurnameWordsAmount > o2SurnameWordsAmount) {
+            return 1;
+        } else if (o1SurnameWordsAmount < o2SurnameWordsAmount) {
+            return -1;
+        } else if (o1SurnameWordsAmount == o2SurnameWordsAmount) {
+            return Integer.compare(o1.getAge(), o2.getAge());
+        }
+
+        return 0;
     }
 }
